@@ -1,0 +1,28 @@
+[{
+        "question": "Kto miał największą średnią w roku szkolnym 2020/21?",
+        "answers": ["Michał F", "Michał D", "Michał K", "Michał G"],
+        "correct": "Michał D"
+    },
+    {
+        "question": "Czy Brek cie widzi?",
+        "answers": ["Tak", "Nie"],
+        "correct": "Nie"
+    },
+    {
+        "question": "Przez co najlepiej przefiltrować denaturat?",
+        "answers": ["Koszulke", "Filtr do kawy", "Chleb", "Skarpetke"],
+        "correct": "Chleb"
+    },
+    {
+        "question": "Przez co najlepiej przefiltrować denaturat?",
+        "answers": ["Koszulke", "Filtr do kawy", "Chleb", "Skarpetke"],
+        "correct": "Chleb"
+    },
+
+    {
+        "question": "Przez co najlepiej przefiltrować denaturat?",
+        "answers": ["Koszulke", "Filtr do kawy", "Chleb", "Skarpetke"],
+        "correct": "Chleb"
+    }
+
+]
