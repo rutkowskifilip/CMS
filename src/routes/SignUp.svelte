@@ -1,7 +1,7 @@
 <div class="container">
   <div class="info">Info box</div>
 
-  <div class="form">
+  <form class="form">
     <div class="element">
       <label for="login">Username</label>
       <input type="text" id="login" name="login" />
@@ -19,7 +19,7 @@
       class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
       >SIGN UP</button
     >
-  </div>
+  </form>
 </div>
 
 <style>
@@ -84,16 +84,16 @@
     width: 75%;
   }
   @media (min-width: 768px) {
-    div.form {
+    form.form {
       width: 50%;
     }
   }
   @media (min-width: 1024px) {
-    div.form {
+    form.form {
       width: 33.333333%;
     }
   }
-  div.form {
+  form.form {
     background-color: var(--divs-color);
     border-radius: 8px;
     padding: 32px;

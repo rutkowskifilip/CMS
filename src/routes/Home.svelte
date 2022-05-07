@@ -254,7 +254,7 @@
   }
   .content {
     width: 92%;
-    height: 100%;
+    height: calc(100% - 8px);
     left: 4%;
     position: absolute;
     opacity: 0;
