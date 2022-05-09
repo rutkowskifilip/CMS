@@ -12,13 +12,13 @@
 <section>
   <p>Header</p>
   {#each headerElems as elem}
-    <div class="elem">
+    <form class="elem">
       <p>{elem.name}</p>
       <h2>"{elem.url}"</h2>
       <button class="delete">Delete</button>
-    </div>
+    </form>
   {/each}
-  <div class="addHeaderElem">
+  <form class="addHeaderElem">
     <div>
       <label for="name">Name:</label>
       <input type="text" name="name" id="name" />
@@ -30,11 +30,11 @@
     <div>
       <button type="submit">Add</button>
     </div>
-  </div>
+  </form>
 </section>
 <section>
   <p>Slider</p>
-  <div class="elem">
+  <form class="elem">
     <label for="pace">Slider changing [s]:</label>
 
     <input
@@ -43,16 +43,16 @@
       bind:value={sliderChangeTimeFromChild}
       on:change={changeTime}
     />
-  </div>
+  </form>
   {#each slides as elem}
-    <div class="elem">
+    <form class="elem">
       <p class="img" contenteditable="true">{elem.img}</p>
       <h2 contenteditable="true">"{elem.content}"</h2>
       <button class="save">Save</button>
       <button class="delete">Delete</button>
-    </div>
+    </form>
   {/each}
-  <div class="addSliderElem">
+  <form class="addSliderElem">
     <div>
       <label for="name">Url:</label>
       <input type="text" name="url" id="url" />
@@ -64,7 +64,7 @@
     <div>
       <button type="submit">Add</button>
     </div>
-  </div>
+  </form>
 </section>
 
 <style>
@@ -85,8 +85,8 @@
     background: var(--btn-color);
     color: var(--font-color);
   }
-  div.addHeaderElem,
-  div.addSliderElem {
+  form.addHeaderElem,
+  form.addSliderElem {
     width: 80%;
     padding: 16px;
     background-color: var(--divs-color);
@@ -103,7 +103,7 @@
     flex-direction: column;
     align-items: center;
   }
-  div.elem {
+  form.elem {
     margin-top: 16px;
     margin-bottom: 16px;
     width: 80%;

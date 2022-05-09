@@ -76,7 +76,7 @@
 <svelte:window on:keyup={handleShortcut} />
 
 <div class="extra-outer-wrapper">
-  <h1>{testowa_zmienna}</h1>
+  <!-- <h1>{testowa_zmienna}</h1> -->
   <div class="outer-wrapper">
     <div class="inner-wrapper">
       {#each slides as slide, id}
@@ -142,7 +142,7 @@
     </div>
   {/each}
   {#if admin}
-    <div class="addNews">
+    <form class="addNews">
       <div style="width:100%">
         <label for="title">Title:</label>
         <input type="text" name="title" id="title" />
@@ -152,7 +152,7 @@
         <textarea name="content" id="content" cols="40" rows="5" />
       </div>
       <button type="submit">Add</button>
-    </div>
+    </form>
   {/if}
 </div>
 
@@ -165,7 +165,7 @@
   button[type="submit"] {
     height: 40px;
   }
-  .addNews {
+  form.addNews {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -278,7 +278,7 @@
   }
   .content {
     width: 92%;
-    height: 100%;
+    height: calc(100% - 8px);
     left: 4%;
     position: absolute;
     opacity: 0;

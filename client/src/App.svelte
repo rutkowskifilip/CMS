@@ -17,7 +17,13 @@
   let admin = true;
   let sliderChangeTime = 4;
   let sliderChangeTimeFromChild = 4;
-
+  let photos = [
+    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
+    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
+    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
+    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
+    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
+  ];
   let slides = [
     {
       img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
@@ -31,16 +37,11 @@
       img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
       content: "XDDDDDDDDDDDD",
     },
-    {
-      img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-      content: "XDDDDDDDDDDDD",
-    },
-    {
-      img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-      content: "XDDDDDDDDDDDD",
-    },
   ];
-
+  let comments = [
+    { author: "Filip", content: "xddddddd" },
+    { author: "Filip", content: "xddddddd" },
+  ];
   let news = [
     { title: "a", content: "aaa" },
     { title: "b", content: "bbb" },
@@ -48,14 +49,19 @@
     { title: "c", content: "ccc" },
   ];
 
-  let headerElems = [
-    { name: "Elem", url: "xddd" },
-    { name: "Elem", url: "xddd" },
-  ];
+  let headerElems = [{ name: "Elem", url: "xddd" }];
+
+  let article =
+    "The cat (Felis catus) is a domestic species of small carnivorous mammal.It is the only domesticated species in the family Felidae and is oftenreferred to as the domestic cat to distinguish it from the wild members of the family. A cat can either be a house cat, a farm cat or a feral cat;the latter ranges freely and avoids human contact. Domestic cats are valued by humans for companionship and their ability to kill rodents. About 60 cat breeds are recognized by various cat registries. The cat is similar in anatomy to the other felid species: it has a strong flexible body, quick reflexes, sharp teeth and retractable claws adapted to killing small prey. Its night vision and sense of smell are well developed. Cat communication includes vocalizations like meowing, purring, trilling, hissing, growling and grunting as well as cat-specific body language. A predator that is most active at dawn and dusk (crepuscular), the cat is a solitary hunter but a social species. It can hear sounds too faint or too high in frequency for human ears, such as those made by mice and other small mammals. Cats also secrete and perceive pheromones.";
 
   //#endregion
-
+  setContext("comments", comments);
+  setContext("photos", photos);
   setContext("news", news);
+  setContext("admin", admin);
+  setContext("article", article);
+  setContext("headerElems", headerElems);
+  setContext("slides", slides);
   function changeTime() {
     sliderChangeTime = sliderChangeTimeFromChild;
     console.log(sliderChangeTime);
@@ -70,11 +76,6 @@
   let divsColor2 = "";
   import { setContext } from "svelte";
 
-  setContext("admin", admin);
-
-  setContext("headerElems", headerElems);
-
-  setContext("slides", slides);
   let root = document.documentElement;
   function changeColors() {
     console.log(theme);

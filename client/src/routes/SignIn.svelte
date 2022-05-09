@@ -16,14 +16,14 @@
 </div>
 
 <style>
-  button:focus {
+  input[type="submit"]:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  button:hover {
+  input[type="submit"]:hover {
     background-color: var(--btn-hov-color);
   }
-  button {
+  input[type="submit"] {
     color: white;
 
     background-color: var(--btn-color);

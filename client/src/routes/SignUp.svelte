@@ -15,23 +15,19 @@
       <input type="password" id="repeat" name="repeat" />
     </div>
 
-    <input
-      type="submit"
-      class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
-      value="SING UP"
-    />
+    <input type="submit" value="SING UP" />
   </form>
 </div>
 
 <style>
-  button:focus {
+  input[type="submit"]:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  button:hover {
+  input[type="submit"]:hover {
     background-color: var(--btn-hov-color);
   }
-  button {
+  input[type="submit"] {
     color: white;
 
     background-color: var(--btn-color);
