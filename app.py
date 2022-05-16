@@ -12,7 +12,7 @@ import random
 import json
 
 app = Flask(__name__)
-bootstrap = Bootstrap(app)
+
 app.config['SECRET_KEY'] = 'Qwerty123!'
 
 myConnection = sqlite3.connect('usersBase.sqlite')
