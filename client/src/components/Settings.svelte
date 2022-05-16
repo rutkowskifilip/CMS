@@ -243,18 +243,19 @@
     }
   }
   div.form {
+    overflow-y: scroll;
+    height: 60%;
     display: none;
     position: fixed;
     left: 25%;
     background-color: var(--divs-color);
     border-radius: 8px;
     padding: 32px;
-
     flex-direction: column;
     align-items: center;
+    justify-content: space-around;
     width: 50%;
-    margin-top: 40px;
-
+    max-height: calc(100% - 80px);
     z-index: 30;
     --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);

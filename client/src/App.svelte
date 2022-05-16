@@ -13,8 +13,8 @@
   import HeaderAdmin from "./components/HeaderAdmin.svelte";
 
   ////#region DANE Z BAZY DANYCH
-  let logged = true;
-  let admin = true;
+  let logged = false;
+  let admin = false;
   let sliderChangeTime = 4;
   // let sliderChangeTimeFromChild = 4;
   let photos = [
@@ -95,7 +95,9 @@
     }
   }
   function changeFont() {
-    root.style.fontFamily = font;
+    console.log(root.style.fontFamily);
+    console.log(font);
+    document.querySelector("body").style.fontFamily = font;
   }
   function changeSize() {
     root.style.fontSize = fontSize + "rem";
