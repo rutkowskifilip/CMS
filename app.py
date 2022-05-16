@@ -33,8 +33,20 @@ myCursor.execute("""CREATE TABLE IF NOT EXISTS photos (
             link text,
             content text,
             ID integer primary key autoincrement,
-            UNIQUE(link,content)
+            UNIQUE(link, content)
             )""")
+myCursor.execute("""CREATE TABLE IF NOT EXISTS comments (
+            author text,
+            content text,
+            ID integer primary key autoincrement
+            )""")
+myCursor.execute("""CREATE TABLE IF NOT EXISTS menuElements (
+            name text,
+            url text,
+            ID integer primary key autoincrement,
+            UNIQUE(name, url)
+            )""")
+
 myCursor.execute(
     "INSERT OR IGNORE INTO users (login,password) VALUES ('admin', 'admin')")
 myCursor.execute(
@@ -53,6 +65,8 @@ myCursor.execute(
     "INSERT OR IGNORE INTO articles (title,content) VALUES ('c', 'ccc')")
 myCursor.execute(
     "INSERT OR IGNORE INTO articles (title,content) VALUES ('d', 'ddd')")
+myCursor.execute(
+    "INSERT OR IGNORE INTO menuElements (name,url) VALUES ('Elem', 'xdddddd')")
 
 myConnection.commit()
 myConnection.close()
@@ -71,44 +85,105 @@ class RegisterForm(FlaskForm):
         'Repeat password:', validators=[DataRequired()])
     submit = SubmitField('Register')
 
+
 loggedAs = ""
+userLogin = ""
 photos = []
 articles = []
+comments = []
+headerElements = []
+users = []
+
 
 @app.route("/")
-
 def base():
     return send_from_directory('client/public', 'index.html')
+
 
 @app.route("/loggedAs")
 def loggedas():
     return str(loggedAs)
 
+
+@app.route("/userlogin")
+def userlogin():
+    return str(userLogin)
+
+
 @app.route("/photosbase")
 def photosBase():
     global photos
+    photos = []
     myConnection = sqlite3.connect('usersBase.sqlite')
     myCursor = myConnection.cursor()
     myCursor.execute("SELECT *, oid FROM photos")
     records = myCursor.fetchall()
 
     for el in records:
-        photos.append({"link":el[0],"content":el[1]})
-    
+        photos.append({"link": el[0], "content": el[1]})
+
     return jsonify(records)
+
+
+@app.route("/usersbase")
+def usersBase():
+    global users
+    users = []
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM users")
+    records = myCursor.fetchall()
+
+    for el in records:
+        users.append({"link": el[0], "content": el[1]})
+
+    return jsonify(records)
+
 
 @app.route("/articlesbase")
 def articlesBase():
     global articles
+    articles = []
     myConnection = sqlite3.connect('usersBase.sqlite')
     myCursor = myConnection.cursor()
     myCursor.execute("SELECT *, oid FROM articles")
     records = myCursor.fetchall()
 
     for el in records:
-        photos.append({"link":el[0],"content":el[1]})
-    
+        photos.append({"link": el[0], "content": el[1]})
+
     return jsonify(records)
+
+
+@app.route("/getcomments")
+def getComments():
+    global comments
+    comments = []
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM comments")
+    records = myCursor.fetchall()
+
+    for el in records:
+        comments.append({"author": el[0], "content": el[1]})
+
+    return jsonify(records)
+
+
+@app.route("/getelements")
+def getElements():
+    global headerElements
+    headerElements = []
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM menuElements")
+    records = myCursor.fetchall()
+
+    for el in records:
+        headerElements.append({"name": el[0], "url": el[1]})
+
+    return jsonify(records)
+
 
 @app.route("/features")
 def features():
@@ -137,7 +212,7 @@ def home(path):
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    global loggedAs
+    global loggedAs, userLogin
     if request.method == 'POST':
         login = request.form['login']
         password = request.form['password']
@@ -164,6 +239,7 @@ def login():
 
                 length = dane.count
                 command = "Admin"
+                userLogin = "admin"
             else:
                 for el in records:
                     if(el[0] == login):
@@ -171,6 +247,7 @@ def login():
 
                         length = 1
                 command = "Zalogowano"
+                userLogin = login
         else:
             command = "Taki user nie istnieje"
             dane = []
@@ -216,6 +293,7 @@ def login():
 
                 length = dane.count
                 command = "Admin"
+                userLogin = "Admin"
             else:
                 for el in records:
                     if(el[0] == login):
@@ -223,6 +301,7 @@ def login():
 
                         length = 1
                 command = "Zalogowano"
+                userLogin = login
         else:
             command = "Taki user nie istnieje"
             dane = []
@@ -267,7 +346,7 @@ def register():
                 print(el[0], login)
                 isntNow = False
 
-        if isntNow == True:
+        if (isntNow == True and login != "" and password != ""):
             myCursor.execute("INSERT INTO users (login,password) VALUES (:login, :password)",
                              {
 
@@ -306,7 +385,7 @@ def register():
                 print(el[0], login)
                 isntNow = False
 
-        if isntNow == True:
+        if (isntNow == True and login != "" and password != ""):
             myCursor.execute("INSERT INTO users (login,password) VALUES (:login, :password)",
                              {
 
@@ -326,7 +405,7 @@ def register():
         return send_from_directory('client/public', 'index.html')
 
 
-@app.route('/addArticle', methods=['POST', 'GET'])
+@app.route('/addarticle', methods=['POST', 'GET'])
 def addArticle():
     if request.method == 'POST':
         title = request.form['title']
@@ -334,11 +413,187 @@ def addArticle():
 
         myConnection = sqlite3.connect('usersBase.sqlite')
         myCursor = myConnection.cursor()
-        myCursor.execute("INSERT INTO articles (title,content) VALUES (:title, :content)",
+        if(title != "" and content != ""):
+            myCursor.execute("INSERT INTO articles (title,content) VALUES (:title, :content)",
+                             {
+
+                                 'title': title,
+                                 'content': content
+
+                             })
+            myConnection.commit()
+            # pobieranie danych z bazy
+
+            # zapisywanie zmian
+            # kończenie połączenia
+            myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+    else:
+        title = request.form['title']
+        content = request.form['content']
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        if(title != "" and content != ""):
+            myCursor.execute("INSERT INTO articles (title,content) VALUES (:title, :content)",
+                             {
+
+                                 'title': title,
+                                 'content': content
+
+                             })
+            myConnection.commit()
+            # pobieranie danych z bazy
+
+            # zapisywanie zmian
+            # kończenie połączenia
+            myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/addelement', methods=['POST', 'GET'])
+def addelement():
+    if request.method == 'POST':
+        name = request.form['name']
+        url = request.form['url']
+        print("added")
+        print(name, url)
+
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        if(name != "" and url != ""):
+            myCursor.execute("INSERT INTO menuElements (name,url) VALUES (:name, :url)",
+                             {
+
+                                 'name': name,
+                                 'url': url
+
+                             })
+            command = "Zarejestrowano"
+            # else:
+            command = "Nie udało się zarejestrowąć, dany login już istnieje"
+            myConnection.commit()
+            # pobieranie danych z bazy
+
+            # zapisywanie zmian
+            # kończenie połączenia
+            myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+    else:
+        name = request.form['name']
+        url = request.form['url']
+        print("added")
+        print(name, url)
+
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        if(name != "" and url != ""):
+            myCursor.execute("INSERT INTO menuElements (name,url) VALUES (:name, :url)",
+                             {
+
+                                 'name': name,
+                                 'url': url
+
+                             })
+            command = "Zarejestrowano"
+            # else:
+            command = "Nie udało się zarejestrowąć, dany login już istnieje"
+            myConnection.commit()
+            # pobieranie danych z bazy
+
+            # zapisywanie zmian
+            # kończenie połączenia
+            myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/addphoto', methods=['POST', 'GET'])
+def addphoto():
+    if request.method == 'POST':
+        link = request.form['link']
+        content = request.form['content']
+        print("added")
+        print(link, content)
+        if(link != "" and content != ""):
+            myConnection = sqlite3.connect('usersBase.sqlite')
+            myCursor = myConnection.cursor()
+
+            myCursor.execute("INSERT INTO photos (link,content) VALUES (:link, :content)",
+                             {
+
+                                 'link': link,
+                                 'content': content
+
+                             })
+            command = "Zarejestrowano"
+            # else:
+            command = "Nie udało się zarejestrowąć, dany login już istnieje"
+            myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+            myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+    else:
+        link = request.form['link']
+        content = request.form['content']
+        print("added")
+        print(link, content)
+        if(link != "" and content != ""):
+            myConnection = sqlite3.connect('usersBase.sqlite')
+            myCursor = myConnection.cursor()
+
+            myCursor.execute("INSERT INTO photos (link,content) VALUES (:link, :content)",
+                             {
+
+                                 'link': link,
+                                 'content': content
+
+                             })
+            command = "Zarejestrowano"
+            # else:
+            command = "Nie udało się zarejestrowąć, dany login już istnieje"
+            myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+        myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/addcomment', methods=['POST', 'GET'])
+def addComment():
+    if request.method == 'POST':
+        text = request.form['comment']
+
+        if text != "":
+            myConnection = sqlite3.connect('usersBase.sqlite')
+            myCursor = myConnection.cursor()
+            myCursor.execute("INSERT INTO comments (author,content) VALUES (:author, :text)",
+                             {
+
+                                 'author': userLogin,
+                                 'text': text
+
+                             })
+            myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+        myConnection.close()
+        return send_from_directory('client/public', 'index.html')
+    else:
+        text = request.form['comment']
+
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        myCursor.execute("INSERT INTO comments (author,text) VALUES (:author, :text)",
                          {
 
-                             'title': title,
-                             'content': content
+                             'author': userLogin,
+                             'text': text
 
                          })
         myConnection.commit()
@@ -348,24 +603,97 @@ def addArticle():
         # kończenie połączenia
         myConnection.close()
         return send_from_directory('client/public', 'index.html')
-    else:
-        title = request.form['title']
-        content = request.form['content']
+
+
+@app.post("/deleteuser")
+def deleteUser():
+    userToDel = request.form["delLogin"]
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM users")
+    records = myCursor.fetchall()
+
+    for el in records:
+        if(el[0] == userToDel):
+            isTrue = True
+
+    if(userToDel != "admin" and isTrue == True and userToDel != ""):
+        sql = "DELETE FROM users WHERE = '" + userToDel + "'"
         myConnection = sqlite3.connect('usersBase.sqlite')
         myCursor = myConnection.cursor()
-        myCursor.execute("INSERT INTO articles (title,content) VALUES (:title, :content)",
-                         {
-
-                             'title': title,
-                             'content': content
-
-                         })
+        myCursor.execute("DELETE FROM users WHERE login = '" + userToDel + "'")
         myConnection.commit()
         # pobieranie danych z bazy
 
         # zapisywanie zmian
         # kończenie połączenia
         myConnection.close()
+
+        return send_from_directory('client/public', 'index.html')
+    else:
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.post("/deleteelement")
+def deleteElement():
+    nameToDel = request.form["delName"]
+    textToDel = request.form["delText"]
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM menuElements")
+    records = myCursor.fetchall()
+
+    for el in records:
+        if(el[0] == nameToDel and el[1] == textToDel):
+            isTrue = True
+
+    if(isTrue == True):
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        myCursor.execute("DELETE FROM menuElements WHERE name = '" +
+                         nameToDel + "' AND url = '" + textToDel + "'")
+        myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+        myConnection.close()
+
+        return send_from_directory('client/public', 'index.html')
+    else:
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/edituser')
+def editUser():
+    editLogin = request.form["editLogin"]
+    editPassword = request.form["editPassword"]
+    newLogin = request.form["newLogin"]
+    newPassword = request.form["newPassword"]
+
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM users")
+    records = myCursor.fetchall()
+
+    for el in records:
+        if(el[0] == editLogin and el[1] == editPassword):
+            isTrue = True
+
+    if(isTrue == True):
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        myCursor.execute("UPDATE users SET login ='" + newLogin + "', password ='" +
+                         newPassword + "' WHERE login = '" + editLogin + "' AND password = " + editPassword + "'")
+        myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+        myConnection.close()
+
+        return send_from_directory('client/public', 'index.html')
+    else:
         return send_from_directory('client/public', 'index.html')
 
 
