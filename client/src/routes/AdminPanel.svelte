@@ -12,29 +12,47 @@
 <section>
   <p>Header</p>
   {#each headerElems as elem}
-    <form class="elem">
+    <div class="elem">
       <p>{elem.name}</p>
       <h2>"{elem.url}"</h2>
-      <button class="delete">Delete</button>
-    </form>
+    </div>
   {/each}
-  <form class="addHeaderElem">
-    <div>
+  <form
+    class="addHeaderElem"
+    action="http://localhost:5000/addelement"
+    method="post"
+  >
+    <p>Add header element</p>
+    <div class="elem">
       <label for="name">Name:</label>
       <input type="text" name="name" id="name" />
     </div>
-    <div>
+    <div class="elem">
       <label for="url">Url:</label>
       <input type="text" name="url" id="url" />
     </div>
-    <div>
-      <button type="submit">Add</button>
+    <input type="submit" value="ADD" />
+  </form>
+  <form
+    action="http://localhost:5000/deleteelement"
+    method="post"
+    class="deleteHeaderElem"
+  >
+    <p>Delete header element</p>
+    <div class="elem">
+      <p>Podaj nazwę elementu do usunięcia</p>
+      <input type="text" name="delName" id="delName" />
     </div>
+    <div class="elem">
+      <p>Podaj zawartość elementu</p>
+      <input type="text" name="delText" id="delText" />
+    </div>
+    <input type="submit" value="DELETE" />
   </form>
 </section>
 <section>
   <p>Slider</p>
-  <form class="elem">
+  <div class="elem">
     <label for="pace">Slider changing [s]:</label>
 
     <input
@@ -43,27 +61,66 @@
       bind:value={sliderChangeTimeFromChild}
       on:change={changeTime}
     />
-  </form>
+  </div>
   {#each slides as elem}
-    <form class="elem">
+    <div class="elem">
       <p class="img" contenteditable="true">{elem.img}</p>
       <h2 contenteditable="true">"{elem.content}"</h2>
       <button class="save">Save</button>
-      <button class="delete">Delete</button>
-    </form>
+    </div>
   {/each}
-  <form class="addSliderElem">
-    <div>
-      <label for="name">Url:</label>
-      <input type="text" name="url" id="url" />
+
+  <form
+    class="addSliderElem"
+    action="http://localhost:5000/addphoto"
+    method="post"
+  >
+    <p>Add slider element</p>
+    <div class="elem">
+      <div>
+        <label for="name">Link:</label>
+        <input type="text" name="link" id="link" />
+      </div>
+      <div>
+        <label for="url">Content:</label>
+        <input type="text" name="content" id="content" />
+      </div>
     </div>
-    <div>
-      <label for="desc">Description:</label>
-      <input type="text" name="desc" id="desc" />
+    <input type="submit" value="ADD" />
+  </form>
+</section>
+<section>
+  <p>Users</p>
+  <form action="http://localhost:5000/deleteuser" method="post" class="form">
+    <p>Delete users</p>
+    <div class="elem">
+      <p>User login</p>
+      <input type="text" name="delLogin" id="delLogin" />
     </div>
-    <div>
-      <button type="submit">Add</button>
+
+    <input type="submit" value="DELETE" />
+  </form>
+
+  <form action="http://localhost:5000/edituser" method="post" class="form">
+    <p>Edit users</p>
+    <div class="elem">
+      <p>User login</p>
+      <input type="text" name="editLogin" id="editLogin" />
     </div>
+    <div class="elem">
+      <p>User password</p>
+
+      <input type="text" name="editPassword" id="editPassword" />
+    </div>
+    <div class="elem">
+      <p>New login</p>
+      <input type="text" name="newLogin" id="newLogin" />
+    </div>
+    <div class="elem">
+      <p>New passord</p>
+      <input type="text" name="newPassword" id="newPassword" />
+    </div>
+    <input type="submit" value="SAVE" />
   </form>
 </section>
 
@@ -75,26 +132,51 @@
     background: green;
     color: white;
   }
-  button.delete {
-    background: red;
-    color: white;
+
+  input[type="submit"]:focus,
+  button:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
+  input[type="submit"]:hover {
+    background-color: var(--btn-hov-color);
+  }
+  input[type="submit"],
   button {
-    height: 50%;
-    width: 64px;
-    background: var(--btn-color);
-    color: var(--font-color);
+    color: white;
+    margin-top: 5px;
+    background-color: var(--btn-color);
+    border: 0;
+    padding-top: 8px /* 8px */;
+    padding-bottom: 8px /* 8px */;
+    border-radius: 4px /* 4px */;
+    font-size: 1.125rem /* 18px */;
+    line-height: 28px /* 28px */;
+    padding-left: 24px /* 24px */;
+    padding-right: 24px /* 24px */;
   }
   form.addHeaderElem,
+  form.deleteHeaderElem,
   form.addSliderElem {
     width: 80%;
     padding: 16px;
     background-color: var(--divs-color);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     margin-top: 16px;
+  }
+  form.form {
+    width: 80%;
+    padding: 16px;
+    background-color: var(--divs-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    align-content: center;
   }
   section {
     margin-bottom: 96px;
@@ -103,7 +185,7 @@
     flex-direction: column;
     align-items: center;
   }
-  form.elem {
+  div.elem {
     margin-top: 16px;
     margin-bottom: 16px;
     width: 80%;
