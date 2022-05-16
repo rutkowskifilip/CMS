@@ -3,7 +3,7 @@ from tkinter.tix import Tree
 from xml.dom.expatbuilder import parseString
 from click import command
 from flask import Flask, jsonify, render_template, request, flash, redirect, session, send_from_directory, url_for
-from flask_bootstrap import Bootstrap
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired
