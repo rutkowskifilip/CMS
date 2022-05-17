@@ -10,7 +10,7 @@
 
   let cur = 0;
   const sliderChangeTime = getContext("sliderChangeTime");
-  console.log(sliderChangeTime);
+  //console.log(sliderChangeTime);
   function changeSlide(slide) {
     cur = slide;
   }
@@ -50,27 +50,7 @@
   let editable = admin;
   let testowa_zmienna = "";
 
-  function loggedAs() {
-    fetch("./loggedAs")
-      .then((d) => d.text())
-      .then((d) => console.log(d))
-      .then((d) => (testowa_zmienna = d));
-  }
-  loggedAs();
 
-  function photosBase() {
-    fetch("./photosbase")
-      .then((d) => d.text())
-      .then((d) => console.log(d));
-  }
-  photosBase();
-
-  function articlesBase() {
-    fetch("./articlesbase")
-      .then((d) => d.text())
-      .then((d) => console.log(d));
-  }
-  articlesBase();
 </script>
 
 <svelte:window on:keyup={handleShortcut} />

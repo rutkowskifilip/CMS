@@ -1,6 +1,6 @@
 <script>
   import { getContext } from "svelte";
-
+  export let logout = () => {};
   const headerElems = getContext("headerElems");
 </script>
 
@@ -12,7 +12,7 @@
       {#each headerElems as elem}
         <a href="#/">{elem.name}</a>
       {/each}
-      <a href="/">Logout</a>
+      <a on:click={logout}>Logout</a>
       <a href="#/adminPanel">Admin Panel</a>
     </nav>
   </div>
