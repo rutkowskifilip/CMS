@@ -11,10 +11,81 @@
   import Header from "./components/Header.svelte";
   import HeaderLog from "./components/HeaderLog.svelte";
   import HeaderAdmin from "./components/HeaderAdmin.svelte";
+//#region 
+
+
+let logged = false;
+let login = false;
+let admin = false;
+function loggedAs() {
+    fetch("./loggedAs")
+      .then((d) => d.text())
+      .then((d) =>{
+
+      console.log(d)
+
+      if(d=="admin"){
+        logged = true;
+        admin = true;
+      }else if(d=="user"){
+        logged = true;
+        admin = false;
+      }else{
+        logged = false;
+        admin = false;
+      }
+      console.log(admin, logged);
+    });
+  }
+  console.log(login);
+
+  loggedAs();
+
+
+  function photosBase() {
+    fetch("./photosbase")
+      .then((d) => d.text())
+      .then((d) => console.log(d));
+  }
+  photosBase();
+
+  function articlesBase() {
+    fetch("./articlesbase")
+      .then((d) => d.text())
+      .then((d) => console.log(d));
+  }
+  articlesBase();
+
+  function logout() {
+    console.log("TEST")
+    login = false
+    admin = false
+    fetch("./logout")
+      .then((d) => d.text())
+      .then((d) => console.log(d))
+      .then((d) =>{
+
+      console.log(d)
+
+      if(d=="admin"){
+        logged = true;
+        admin = true;
+      }else if(d=="user"){
+        logged = true;
+        admin = false;
+      }else{
+        logged = false;
+        admin = false;
+      }
+      console.log(admin, logged);
+      });
+    
+    }
+
+  
 
   ////#region DANE Z BAZY DANYCH
-  let logged = false;
-  let admin = false;
+
   let sliderChangeTime = 4;
   // let sliderChangeTimeFromChild = 4;
   let photos = [
@@ -110,13 +181,16 @@
     root.style.setProperty("--divs-color", divsColor);
     root.style.setProperty("--divs-color2", "rgba(" + divsColor2 + ",0.75)");
   }
+
 </script>
 
 {#if logged}
   {#if admin}
-    <HeaderAdmin />
+    <HeaderAdmin logout={()=> logout()}/>
+      <!-- <HeaderAdmin /> -->
   {:else}
-    <HeaderLog />
+    <HeaderLog logout={()=> logout()}/>
+      <!-- <HeaderLog /> -->
   {/if}
 {:else}
   <Header />

@@ -104,6 +104,12 @@ def base():
 def loggedas():
     return str(loggedAs)
 
+@app.route("/logout")
+def logout():
+    global loggedAs 
+    loggedAs = "notLogged"
+    print(loggedAs)
+    return str(loggedAs)
 
 @app.route("/userlogin")
 def userlogin():
