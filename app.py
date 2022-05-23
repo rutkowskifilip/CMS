@@ -60,7 +60,7 @@ myCursor.execute("""CREATE TABLE IF NOT EXISTS gallery (
             UNIQUE(link)
             )""")
 myCursor.execute("""CREATE TABLE IF NOT EXISTS time (
-            time number,
+            time integer,
             ID integer primary key autoincrement,
             UNIQUE(time)
             )""")
@@ -155,11 +155,11 @@ def getGallery():
 @app.route('/settime', methods=['GET', 'POST'])
 def setTime():
     global timeSlider
-    setTime =int(request.form["sliderChangeTime"])
-    timeSlider = setTime
+    setTime = str(request.form["sliderChangeTime"])
+    timeSlider = str(setTime)
     myConnection = sqlite3.connect('usersBase.sqlite')
     myCursor = myConnection.cursor()
-    myCursor.execute("UPDATE time SET time ='" + setTime + "' WHERE ID = " + 1)
+    myCursor.execute("UPDATE time SET time ='" + str(setTime) + "' WHERE ID = 1")
     myConnection.commit()
     return send_from_directory('client/public', 'index.html')
 

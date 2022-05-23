@@ -84,7 +84,7 @@
     <h1 id="title" contenteditable={admin}>Article</h1>
     <p id="article" contenteditable={admin}>{article}</p>
     {#if admin}
-      <button on:click={editArticle}>Save</button>
+      <button onclick={editArticle}>Save</button>
     {/if}
   </div>
 </section>

@@ -85,7 +85,7 @@
     <form action="http://localhost:5000/settime" method="post">
       <label for="pace">Slider changing [s]:</label>
 
-      <input id="sliderChangeTime" name="sliderChangeTime" type="number" />
+      <input id="sliderChangeTime" name="sliderChangeTime" />
       <input type="submit" value="Save" />
     </form>
   </div>

@@ -22,6 +22,10 @@
       .then((d) => {
         console.log(d);
         time = d;
+        setInterval(() => {
+          next();
+          console.log(time);
+        }, time * 1000);
       });
   }
 
@@ -74,9 +78,6 @@
     }
     cur = clamp(--cur, 0, slides.length - 1);
   }
-  setInterval(() => {
-    next();
-  }, time * 1000);
 
   function next(e) {
     if (cur == slides.length - 1) {
