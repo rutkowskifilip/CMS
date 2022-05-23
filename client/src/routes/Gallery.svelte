@@ -39,17 +39,17 @@
       });
   }
   commentsBase();
-  // function articleCont() {
-  //   fetch("./articlecontent")
-  //     .then((d) => d.text())
-  //     .then((d) => {
-  //       console.log(d);
-  //       article = d;
-  //     });
-  // }
-  // articleCont();
+  let article = "";
+  function articleCont() {
+    fetch("./getarticle")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+        article = d;
+      });
+  }
+  articleCont();
   //const comments = getContext("comments");
-  const article = getContext("article");
 
   let editable = false;
   if (admin) {
@@ -64,18 +64,15 @@
     });
   };
   function editArticle() {
+    console.log("xddd");
     let content = document.getElementById("article").innerText;
     fetch("http://127.0.0.1:5000/editarticle", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify({ content: content }),
-      headers: new Headers({ "content-type": "application/json" }),
+      headers: new Headers({ "content-type": "plain/text" }),
       mode: "cors",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("WORK");
-      });
+    }).then((response) => response.text());
   }
 </script>
 
@@ -84,7 +81,7 @@
     <h1 id="title" contenteditable={admin}>Article</h1>
     <p id="article" contenteditable={admin}>{article}</p>
     {#if admin}
-      <button onclick={editArticle}>Save</button>
+      <button on:click={editArticle}>Save</button>
     {/if}
   </div>
 </section>

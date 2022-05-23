@@ -47,7 +47,6 @@
     admin = false;
     fetch("./logout")
       .then((d) => d.text())
-      .then((d) => console.log(d))
       .then((d) => {
         console.log(d);
 

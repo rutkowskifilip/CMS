@@ -1,5 +1,6 @@
 <script>
   import { getContext } from "svelte";
+
   let users = [["x"]],
     slides = [[]],
     headerElems = [[]];

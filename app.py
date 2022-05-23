@@ -200,8 +200,9 @@ def addgallery():
         return send_from_directory('client/public', 'index.html')
 
 
-@app.route("/editarticle", methods=['POST'])
+@app.route("/editarticle", methods=['POST', 'GET'])
 def editarticle():
+    global article
     req = request.get_json()
     article = req["content"]
     myConnection = sqlite3.connect('usersBase.sqlite')
@@ -209,7 +210,7 @@ def editarticle():
     myCursor.execute("UPDATE article SET content ='" +
                      req["content"] + "' WHERE ID = " + 1)
     myConnection.commit()
-
+    return send_from_directory('client/public', 'index.html')
 
 @app.route("/photosbase")
 def photosBase():
