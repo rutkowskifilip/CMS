@@ -1,7 +1,19 @@
 <script>
-  import { getContext } from "svelte";
   export let logout = () => {};
-  const headerElems = getContext("headerElems");
+  let headerElems = [[]];
+  function elementsBase() {
+    fetch("./getelements")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        headerElems = d;
+      });
+  }
+  elementsBase();
+  let string = "";
+  const search = () => {
+    window.find(string);
+  };
 </script>
 
 <header>
@@ -10,15 +22,27 @@
       <a href="#/">Home</a>
       <a href="#/gallery">Gallery</a>
       {#each headerElems as elem}
-        <a href="#/">{elem.name}</a>
+        <a href="#/">{elem[0]}</a>
       {/each}
       <a on:click={logout}>Logout</a>
       <a href="#/adminPanel">Admin Panel</a>
     </nav>
   </div>
 </header>
+<input
+  type="text"
+  id="search"
+  bind:value={string}
+  on:input={search}
+  placeholder="Search.."
+/>
 
 <style>
+  input#search {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+  }
   header {
     color: var(--font-color);
   }

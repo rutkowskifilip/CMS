@@ -11,114 +11,64 @@
   import Header from "./components/Header.svelte";
   import HeaderLog from "./components/HeaderLog.svelte";
   import HeaderAdmin from "./components/HeaderAdmin.svelte";
-//#region 
+  //#region
 
+  let logged = false;
+  let login = false;
+  let admin = false;
+  let news = [[]];
 
-let logged = false;
-let login = false;
-let admin = false;
-function loggedAs() {
+  function loggedAs() {
     fetch("./loggedAs")
       .then((d) => d.text())
-      .then((d) =>{
+      .then((d) => {
+        console.log(d);
 
-      console.log(d)
-
-      if(d=="admin"){
-        logged = true;
-        admin = true;
-      }else if(d=="user"){
-        logged = true;
-        admin = false;
-      }else{
-        logged = false;
-        admin = false;
-      }
-      console.log(admin, logged);
-    });
+        if (d == "admin") {
+          logged = true;
+          admin = true;
+        } else if (d == "user") {
+          logged = true;
+          admin = false;
+        } else {
+          logged = false;
+          admin = false;
+        }
+        console.log(admin, logged);
+      });
   }
   console.log(login);
 
   loggedAs();
 
-
-  function photosBase() {
-    fetch("./photosbase")
-      .then((d) => d.text())
-      .then((d) => console.log(d));
-  }
-  photosBase();
-
-  function articlesBase() {
-    fetch("./articlesbase")
-      .then((d) => d.text())
-      .then((d) => console.log(d));
-  }
-  articlesBase();
-
   function logout() {
-    console.log("TEST")
-    login = false
-    admin = false
+    console.log("TEST");
+    login = false;
+    admin = false;
     fetch("./logout")
       .then((d) => d.text())
       .then((d) => console.log(d))
-      .then((d) =>{
+      .then((d) => {
+        console.log(d);
 
-      console.log(d)
-
-      if(d=="admin"){
-        logged = true;
-        admin = true;
-      }else if(d=="user"){
-        logged = true;
-        admin = false;
-      }else{
-        logged = false;
-        admin = false;
-      }
-      console.log(admin, logged);
+        if (d == "admin") {
+          logged = true;
+          admin = true;
+        } else if (d == "user") {
+          logged = true;
+          admin = false;
+        } else {
+          logged = false;
+          admin = false;
+        }
+        console.log(admin, logged);
       });
-    
-    }
-
-  
+  }
 
   ////#region DANE Z BAZY DANYCH
 
   let sliderChangeTime = 4;
   // let sliderChangeTimeFromChild = 4;
-  let photos = [
-    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-    "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-  ];
-  let slides = [
-    {
-      img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-      content: "XDDDDDDDDDDDD",
-    },
-    {
-      img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-      content: "XDDDDDDDDDDDD",
-    },
-    {
-      img: "https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg",
-      content: "XDDDDDDDDDDDD",
-    },
-  ];
-  let comments = [
-    { author: "Filip", content: "xddddddd" },
-    { author: "Filip", content: "xddddddd" },
-  ];
-  let news = [
-    { title: "a", content: "aaa" },
-    { title: "b", content: "bbb" },
-    { title: "c", content: "ccc" },
-    { title: "c", content: "ccc" },
-  ];
 
   let headerElems = [{ name: "Elem", url: "xddd" }];
 
@@ -126,13 +76,11 @@ function loggedAs() {
     "The cat (Felis catus) is a domestic species of small carnivorous mammal.It is the only domesticated species in the family Felidae and is oftenreferred to as the domestic cat to distinguish it from the wild members of the family. A cat can either be a house cat, a farm cat or a feral cat;the latter ranges freely and avoids human contact. Domestic cats are valued by humans for companionship and their ability to kill rodents. About 60 cat breeds are recognized by various cat registries. The cat is similar in anatomy to the other felid species: it has a strong flexible body, quick reflexes, sharp teeth and retractable claws adapted to killing small prey. Its night vision and sense of smell are well developed. Cat communication includes vocalizations like meowing, purring, trilling, hissing, growling and grunting as well as cat-specific body language. A predator that is most active at dawn and dusk (crepuscular), the cat is a solitary hunter but a social species. It can hear sounds too faint or too high in frequency for human ears, such as those made by mice and other small mammals. Cats also secrete and perceive pheromones.";
 
   //#endregion
-  setContext("comments", comments);
-  setContext("photos", photos);
-  setContext("news", news);
+  console.log(admin);
   setContext("admin", admin);
   setContext("article", article);
   setContext("headerElems", headerElems);
-  setContext("slides", slides);
+
   function changeTime() {
     sliderChangeTime = sliderChangeTimeFromChild;
     console.log(sliderChangeTime);
@@ -181,16 +129,15 @@ function loggedAs() {
     root.style.setProperty("--divs-color", divsColor);
     root.style.setProperty("--divs-color2", "rgba(" + divsColor2 + ",0.75)");
   }
-
 </script>
 
 {#if logged}
   {#if admin}
-    <HeaderAdmin logout={()=> logout()}/>
-      <!-- <HeaderAdmin /> -->
+    <HeaderAdmin logout={() => logout()} />
+    <!-- <HeaderAdmin /> -->
   {:else}
-    <HeaderLog logout={()=> logout()}/>
-      <!-- <HeaderLog /> -->
+    <HeaderLog logout={() => logout()} />
+    <!-- <HeaderLog /> -->
   {/if}
 {:else}
   <Header />

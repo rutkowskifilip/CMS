@@ -1,8 +1,15 @@
 <script>
-  import { getContext } from "svelte";
+  let headerElems = [[]];
+  function elementsBase() {
+    fetch("./getelements")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        headerElems = d;
+      });
+  }
+  elementsBase();
 
-  const headerElems = getContext("headerElems");
-  console.log(headerElems);
   let string = "";
   const search = () => {
     window.find(string);
@@ -15,7 +22,7 @@
       <a href="#/">Home</a>
       <a href="#/gallery">Gallery</a>
       {#each headerElems as elem}
-        <a href="#/">{elem.name}</a>
+        <a href="#/">{elem[0]}</a>
       {/each}
       <a href="#/signin">Sign in</a>
       <a href="#/signup">Sign up</a>

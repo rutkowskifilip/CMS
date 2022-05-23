@@ -1,12 +1,60 @@
 <script>
   import { getContext } from "svelte";
   import { get } from "svelte/store";
-
-  const admin = getContext("admin");
-  const news = getContext("news");
-
-  const slides = getContext("slides");
+  import { onMount } from "svelte";
   import { hslide } from "../hslide.js";
+  let admin,
+    time = 4,
+    news = [["X", "D"]],
+    slides = [[""]];
+
+  function articlesBase() {
+    fetch("./articlesbase")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        news = d;
+      });
+  }
+  function getTime() {
+    fetch("./gettime")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+        time = d;
+      });
+  }
+
+  getTime();
+  articlesBase();
+  let photos = [[""]];
+  function photosBase() {
+    fetch("./photosbase")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        slides = d;
+      });
+  }
+  photosBase();
+
+  function loggedAs() {
+    fetch("./loggedAs")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+
+        if (d == "admin") {
+          admin = true;
+        } else {
+          admin = false;
+        }
+        console.log(admin);
+      });
+  }
+
+  loggedAs();
+  // const slides = getContext("slides");
 
   let cur = 0;
   const sliderChangeTime = getContext("sliderChangeTime");
@@ -28,7 +76,7 @@
   }
   setInterval(() => {
     next();
-  }, 4 * 1000);
+  }, time * 1000);
 
   function next(e) {
     if (cur == slides.length - 1) {
@@ -48,9 +96,8 @@
     }
   }
   let editable = admin;
+
   let testowa_zmienna = "";
-
-
 </script>
 
 <svelte:window on:keyup={handleShortcut} />
@@ -68,9 +115,9 @@
           >
             <div class="content">
               <h2>Description</h2>
-              <p>{slide.content}</p>
+              <p>{slide[1]}</p>
             </div>
-            <img src={slide.img} alt="" />
+            <img src={slide[0]} alt="" />
           </div>
         {/if}
       {/each}
@@ -97,9 +144,9 @@
     <div class="oneNews">
       <h2>News {i + 1}</h2>
       <h1 contenteditable={admin}>
-        {onenews.title}
+        {onenews[0]}
       </h1>
-      <p contenteditable={admin}>{onenews.content}</p>
+      <p contenteditable={admin}>{onenews[1]}</p>
       <a href="/"
         >Learn More
         <svg
@@ -122,7 +169,11 @@
     </div>
   {/each}
   {#if admin}
-    <form class="addNews">
+    <form
+      action="http://localhost:5000/addarticle"
+      method="post"
+      class="addNews"
+    >
       <div style="width:100%">
         <label for="title">Title:</label>
         <input type="text" name="title" id="title" />
@@ -131,7 +182,7 @@
         <label for="content">Content:</label>
         <textarea name="content" id="content" cols="40" rows="5" />
       </div>
-      <button type="submit">Add</button>
+      <p><input type="submit" value="submit" /></p>
     </form>
   {/if}
 </div>
@@ -142,8 +193,9 @@
     height: 1rem;
     margin-left: 0.5rem;
   }
-  button[type="submit"] {
+  input[type="submit"] {
     height: 40px;
+    width: 400px;
   }
   form.addNews {
     display: flex;
@@ -169,16 +221,19 @@
     width: 100%;
     height: 100%;
   }
-  button {
+  button,
+  input[type="submit"] {
     background: transparent;
     color: #fff;
     border-color: transparent;
-    width: 3.2rem;
+
     height: 3.2rem;
     background: var(--btn-color);
     margin-top: 5px;
   }
 
+  input[type="submit"]:hover,
+  input[type="submit"]:focus,
   button:hover,
   button:focus {
     background: rgba(0, 0, 0, 0.5);

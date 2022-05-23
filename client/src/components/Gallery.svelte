@@ -1,55 +1,10 @@
 <script>
   import { getContext } from "svelte";
-  let admin;
-  function loggedAs() {
-    fetch("./loggedAs")
-      .then((d) => d.text())
-      .then((d) => {
-        console.log(d);
 
-        if (d == "admin") {
-          admin = true;
-        } else {
-          admin = false;
-        }
-        console.log(admin);
-      });
-  }
-
-  loggedAs();
-
-  let photos = [[""]],
-    comments = [["x"]];
-  // let article = "";
-  function photosBase() {
-    fetch("./getgallery")
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-        photos = d;
-      });
-  }
-  photosBase();
-  function commentsBase() {
-    fetch("./getcomments")
-      .then((d) => d.json())
-      .then((d) => {
-        console.log(d);
-        comments = d;
-      });
-  }
-  commentsBase();
-  // function articleCont() {
-  //   fetch("./articlecontent")
-  //     .then((d) => d.text())
-  //     .then((d) => {
-  //       console.log(d);
-  //       article = d;
-  //     });
-  // }
-  // articleCont();
-  //const comments = getContext("comments");
-  const article = getContext("article");
+  const admin = getContext("admin");
+  let photos = [];
+  let article = "";
+  let comments = [[]];
 
   let editable = false;
   if (admin) {
@@ -63,6 +18,28 @@
         "calc(" + 100 / numberOfPhotos + "% - " + 64 / numberOfPhotos + "px)";
     });
   };
+
+  function getComments() {
+    fetch("./getcomments")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+        comments = d;
+      });
+  }
+
+  getComments();
+
+  function getArticle() {
+    fetch("./getarticle")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+        article = d;
+      });
+  }
+  getArticle();
+
   function editArticle() {
     let content = document.getElementById("article").innerText;
     fetch("http://127.0.0.1:5000/editarticle", {
@@ -77,12 +54,23 @@
         console.log("WORK");
       });
   }
+
+  function getGallery() {
+    fetch("./getgallery")
+      .then((d) => d.text())
+      .then((d) => {
+        console.log(d);
+        photos = d;
+      });
+  }
+
+  getGallery();
 </script>
 
 <section>
   <div class="container">
-    <h1 id="title" contenteditable={admin}>Article</h1>
-    <p id="article" contenteditable={admin}>{article}</p>
+    <h1 id="title" contenteditable={editable}>Article</h1>
+    <p id="article" contenteditable={editable}>{article}</p>
     {#if admin}
       <button on:click={editArticle}>Save</button>
     {/if}
@@ -111,7 +99,7 @@
     <div class="gallery">
       {#each photos as photo, i}
         <div class="image">
-          <img alt="gallery" src={photo[0]} />
+          <img alt="gallery" src={photo} />
           <div class="imgDesc">
             <h2>
               Cat {i + 1}
@@ -121,17 +109,15 @@
         </div>
       {/each}
       {#if admin}
-        <div style="width:100%">
-          <form
-            action="http://localhost:5000/addgallery"
-            method="post"
-            class="addPhoto"
-          >
-            <label for="url">Photo url:</label>
-            <input type="text" name="url" id="url" />
+        <div class="addPhoto">
+          <div style="width:100%">
+            <form action="http://localhost:5000/addgallery" method="post">
+              <label for="url">Photo url:</label>
+              <input type="text" name="url" id="url" />
 
-            <input type="submit" value="ADD" />
-          </form>
+              <input type="submit" value="ADD" />
+            </form>
+          </div>
         </div>
       {/if}
     </div>
@@ -145,8 +131,8 @@
       id="commentForm"
       method="post"
     >
-      <textarea name="comment" id="addComment" cols="70" rows="10" />
-      <button type="submit" title="Add">Add</button>
+      <input type="text" name="comment" id="comment" cols="70" rows="10" />
+      <input type="submit" title="Add" value="ADD" />
     </form>
     {#each comments as comment}
       <div id="comment">
@@ -179,7 +165,7 @@
     width: 80%;
     margin-left: 10%;
   }
-  form.addPhoto {
+  div.addPhoto {
     width: calc(25% - 16px);
     display: flex;
     flex-direction: column;
@@ -287,6 +273,7 @@
     flex-direction: column;
     align-items: center;
   }
+
   h2 {
     letter-spacing: 0.1em;
     font-size: 0.875rem /* 14px */;
@@ -328,17 +315,14 @@
       max-width: 1536px;
     }
   }
-  button:focus,
-  input[type="submit"]:focus {
+  button:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  button:hover,
-  input[type="submit"]:hover {
+  button:hover {
     background-color: var(--btn-hov-color);
   }
-  button,
-  input[type="submit"] {
+  button {
     color: white;
 
     background-color: var(--btn-color);

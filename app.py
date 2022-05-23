@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+
 from tkinter.tix import Tree
 from xml.dom.expatbuilder import parseString
 from click import command
@@ -47,6 +48,23 @@ myCursor.execute("""CREATE TABLE IF NOT EXISTS menuElements (
             UNIQUE(name, url)
             )""")
 
+myCursor.execute("""CREATE TABLE IF NOT EXISTS article (
+            content text,
+            ID integer primary key autoincrement,
+            UNIQUE(content)
+            )""")
+
+myCursor.execute("""CREATE TABLE IF NOT EXISTS gallery (
+            link text,
+            ID integer primary key autoincrement,
+            UNIQUE(link)
+            )""")
+myCursor.execute("""CREATE TABLE IF NOT EXISTS time (
+            time number,
+            ID integer primary key autoincrement,
+            UNIQUE(time)
+            )""")
+
 myCursor.execute(
     "INSERT OR IGNORE INTO users (login,password) VALUES ('admin', 'admin')")
 myCursor.execute(
@@ -67,7 +85,12 @@ myCursor.execute(
     "INSERT OR IGNORE INTO articles (title,content) VALUES ('d', 'ddd')")
 myCursor.execute(
     "INSERT OR IGNORE INTO menuElements (name,url) VALUES ('Elem', 'xdddddd')")
-
+myCursor.execute(
+    "INSERT OR IGNORE INTO article (content) VALUES ('The cat (Felis catus) is a domestic species of small carnivorous mammal.It is the only domesticated species in the family Felidae and is oftenreferred to as the domestic cat to distinguish it from the wild members of the family. A cat can either be a house cat, a farm cat or a feral cat;the latter ranges freely and avoids human contact. Domestic cats are valued by humans for companionship and their ability to kill rodents. About 60 cat breeds are recognized by various cat registries. The cat is similar in anatomy to the other felid species: it has a strong flexible body, quick reflexes, sharp teeth and retractable claws adapted to killing small prey. Its night vision and sense of smell are well developed. Cat communication includes vocalizations like meowing, purring, trilling, hissing, growling and grunting as well as cat-specific body language. A predator that is most active at dawn and dusk (crepuscular), the cat is a solitary hunter but a social species. It can hear sounds too faint or too high in frequency for human ears, such as those made by mice and other small mammals. Cats also secrete and perceive pheromones.')")
+myCursor.execute(
+    "INSERT OR IGNORE INTO gallery (link) VALUES ('https://tueuropa.pl/uploads/articles_files/2021/11/05/6e7f9516-1948-d9e8-ca22-00007380aca5.jpg')")
+myCursor.execute(
+    "INSERT OR IGNORE INTO time (time) VALUES ('1')")
 myConnection.commit()
 myConnection.close()
 
@@ -88,6 +111,8 @@ class RegisterForm(FlaskForm):
 
 loggedAs = ""
 userLogin = ""
+timeSlider = 5
+article = "The cat (Felis catus) is a domestic species of small carnivorous mammal.It is the only domesticated species in the family Felidae and is oftenreferred to as the domestic cat to distinguish it from the wild members of the family. A cat can either be a house cat, a farm cat or a feral cat;the latter ranges freely and avoids human contact. Domestic cats are valued by humans for companionship and their ability to kill rodents. About 60 cat breeds are recognized by various cat registries. The cat is similar in anatomy to the other felid species: it has a strong flexible body, quick reflexes, sharp teeth and retractable claws adapted to killing small prey. Its night vision and sense of smell are well developed. Cat communication includes vocalizations like meowing, purring, trilling, hissing, growling and grunting as well as cat-specific body language. A predator that is most active at dawn and dusk (crepuscular), the cat is a solitary hunter but a social species. It can hear sounds too faint or too high in frequency for human ears, such as those made by mice and other small mammals. Cats also secrete and perceive pheromones."
 photos = []
 articles = []
 comments = []
@@ -104,16 +129,86 @@ def base():
 def loggedas():
     return str(loggedAs)
 
-@app.route("/logout")
-def logout():
-    global loggedAs 
-    loggedAs = "notLogged"
-    print(loggedAs)
-    return str(loggedAs)
 
 @app.route("/userlogin")
 def userlogin():
     return str(userLogin)
+
+
+@app.route("/getarticle")
+def articlecontent():
+
+    return str(article)
+
+
+@app.route('/getgallery')
+def getGallery():
+    global article
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM gallery")
+    records = myCursor.fetchall()
+
+    return jsonify(records)
+
+
+@app.route('/settime', methods=['GET', 'POST'])
+def setTime():
+    global timeSlider
+    setTime =int(request.form["sliderChangeTime"])
+    timeSlider = setTime
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("UPDATE time SET time ='" + setTime + "' WHERE ID = " + 1)
+    myConnection.commit()
+    return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/gettime')
+def getTime():
+    return str(timeSlider)
+
+
+@app.route("/addgallery", methods=['GET', 'POST'])
+def addgallery():
+    print("DZIAŁA")
+    if request.method == 'POST':
+        link = request.form['url']
+        print(link)
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        if(link != ""):
+            myCursor.execute("INSERT  INTO gallery (link) VALUES (:link)",
+                             {
+
+                                 'link': link
+                             })
+            myConnection.commit()
+        return send_from_directory('client/public', 'index.html')
+    else:
+        link = request.form['url']
+        print(link)
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        if(link != ""):
+            myCursor.execute("INSERT INTO gallery (link) VALUES (:link)",
+                             {
+
+                                 'link': link
+                             })
+            myConnection.commit()
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.route("/editarticle", methods=['POST'])
+def editarticle():
+    req = request.get_json()
+    article = req["content"]
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("UPDATE article SET content ='" +
+                     req["content"] + "' WHERE ID = " + 1)
+    myConnection.commit()
 
 
 @app.route("/photosbase")
@@ -236,7 +331,7 @@ def login():
         records = myCursor.fetchall()
 
         for el in records:
-            if(el[0] == login):
+            if(el[0] == login and el[1] == password):
                 isNow = True
 
         if isNow:
@@ -290,7 +385,7 @@ def login():
         records = myCursor.fetchall()
 
         for el in records:
-            if(el[0] == login):
+            if(el[0] == login and el[1] == password):
                 isNow = True
 
         if isNow:
@@ -670,8 +765,40 @@ def deleteElement():
         return send_from_directory('client/public', 'index.html')
 
 
-@app.route('/edituser')
-def editUser():
+@app.post("/deletephoto")
+def deletePhoto():
+    delLink = request.form["delLink"]
+    delContent = request.form["delContent"]
+    myConnection = sqlite3.connect('usersBase.sqlite')
+    myCursor = myConnection.cursor()
+    myCursor.execute("SELECT *, oid FROM menuElements")
+    records = myCursor.fetchall()
+
+    for el in records:
+        if(el[0] == delLink and el[1] == delContent):
+            isTrue = True
+
+    isTrue = True
+
+    if(isTrue == True):
+        myConnection = sqlite3.connect('usersBase.sqlite')
+        myCursor = myConnection.cursor()
+        myCursor.execute("DELETE FROM photos WHERE link = '" +
+                         delLink + "' AND content = '" + delContent + "'")
+        myConnection.commit()
+        # pobieranie danych z bazy
+
+        # zapisywanie zmian
+        # kończenie połączenia
+        myConnection.close()
+
+        return send_from_directory('client/public', 'index.html')
+    else:
+        return send_from_directory('client/public', 'index.html')
+
+
+@app.post('/edituser')
+def editUserBase():
     editLogin = request.form["editLogin"]
     editPassword = request.form["editPassword"]
     newLogin = request.form["newLogin"]
@@ -690,7 +817,7 @@ def editUser():
         myConnection = sqlite3.connect('usersBase.sqlite')
         myCursor = myConnection.cursor()
         myCursor.execute("UPDATE users SET login ='" + newLogin + "', password ='" +
-                         newPassword + "' WHERE login = '" + editLogin + "' AND password = " + editPassword + "'")
+                         newPassword + "' WHERE login = '" + editLogin + "' AND password = '" + editPassword + "'")
         myConnection.commit()
         # pobieranie danych z bazy
 
@@ -701,6 +828,23 @@ def editUser():
         return send_from_directory('client/public', 'index.html')
     else:
         return send_from_directory('client/public', 'index.html')
+
+
+@app.route('/editPhoto')
+def editPhoto():
+    req = request.get_json()
+    # ID = 0
+    # myConnection = sqlite3.connect('usersBase.sqlite')
+    # myCursor = myConnection.cursor()
+
+    # myCursor.execute("SELECT *, oid FROM users")
+    # records = myCursor.fetchall()
+
+    # for el in records:
+    #     if(el[0] == editLogin and el[1] == editPassword):
+    #         isTrue = True
+    print(req)
+    return 0
 
 
 @app.errorhandler(404)

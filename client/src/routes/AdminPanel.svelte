@@ -1,9 +1,38 @@
 <script>
   import { getContext } from "svelte";
+  let users = [["x"]],
+    slides = [[]],
+    headerElems = [[]];
+  function usersBase() {
+    fetch("./usersbase")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        users = d;
+      });
+  }
+  usersBase();
+  function photosBase() {
+    fetch("./photosbase")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        slides = d;
+      });
+  }
+  photosBase();
+  function elementsBase() {
+    fetch("./getelements")
+      .then((d) => d.json())
+      .then((d) => {
+        console.log(d);
+        headerElems = d;
+      });
+  }
+  elementsBase();
 
-  const headerElems = getContext("headerElems");
   console.log(headerElems);
-  const slides = getContext("slides");
+  //const slides = getContext("slides");
   export let sliderChangeTimeFromChild;
 
   export let changeTime = () => {};
@@ -13,8 +42,8 @@
   <p>Header</p>
   {#each headerElems as elem}
     <div class="elem">
-      <p>{elem.name}</p>
-      <h2>"{elem.url}"</h2>
+      <p>{elem[0]}</p>
+      <h2>"{elem[1]}"</h2>
     </div>
   {/each}
   <form
@@ -31,7 +60,7 @@
       <label for="url">Url:</label>
       <input type="text" name="url" id="url" />
     </div>
-    <input type="submit" value="ADD" />
+    <input type="submit" value="Add" />
   </form>
   <form
     action="http://localhost:5000/deleteelement"
@@ -40,32 +69,30 @@
   >
     <p>Delete header element</p>
     <div class="elem">
-      <p>Podaj nazwę elementu do usunięcia</p>
+      <p>Name:</p>
       <input type="text" name="delName" id="delName" />
     </div>
     <div class="elem">
-      <p>Podaj zawartość elementu</p>
+      <p>Value:</p>
       <input type="text" name="delText" id="delText" />
     </div>
-    <input type="submit" value="DELETE" />
+    <input type="submit" value="Delete" />
   </form>
 </section>
 <section>
   <p>Slider</p>
   <div class="elem">
-    <label for="pace">Slider changing [s]:</label>
+    <form action="http://localhost:5000/settime" method="post">
+      <label for="pace">Slider changing [s]:</label>
 
-    <input
-      id="sliderChangeTime"
-      type="number"
-      bind:value={sliderChangeTimeFromChild}
-      on:change={changeTime}
-    />
+      <input id="sliderChangeTime" name="sliderChangeTime" type="number" />
+      <input type="submit" value="Save" />
+    </form>
   </div>
   {#each slides as elem}
     <div class="elem">
-      <p class="img" contenteditable="true">{elem.img}</p>
-      <h2 contenteditable="true">"{elem.content}"</h2>
+      <p class="img" contenteditable="true">{elem[0]}</p>
+      <h2 contenteditable="true">"{elem[1]}"</h2>
       <button class="save">Save</button>
     </div>
   {/each}
@@ -86,11 +113,17 @@
         <input type="text" name="content" id="content" />
       </div>
     </div>
-    <input type="submit" value="ADD" />
+    <input type="submit" value="Add" />
   </form>
 </section>
 <section>
   <p>Users</p>
+  {#each users as user}
+    <div class="elem">
+      <p>{user[0]}</p>
+      <h2>"{user[1]}"</h2>
+    </div>
+  {/each}
   <form action="http://localhost:5000/deleteuser" method="post" class="form">
     <p>Delete users</p>
     <div class="elem">
@@ -98,7 +131,7 @@
       <input type="text" name="delLogin" id="delLogin" />
     </div>
 
-    <input type="submit" value="DELETE" />
+    <input type="submit" value="Delete" />
   </form>
 
   <form action="http://localhost:5000/edituser" method="post" class="form">
